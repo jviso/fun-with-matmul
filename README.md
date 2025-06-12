@@ -2,7 +2,13 @@
 
 ## Purpose
 
-TODO
+This is simply documentation of a little learning journey as I explore:
+
+- Ways to represent matrices
+- Algorithms for operations on matrices
+- Performance optimizations and their trade-offs
+- Options for accelerating code on a GPU
+- Impact of programming language on all of the above
 
 ## TODO
 

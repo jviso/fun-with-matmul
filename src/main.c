@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
 typedef struct Matrix Matrix;
 
@@ -11,35 +12,41 @@ struct Matrix {
 
 void print_matrix(Matrix m);
 
+void init_matrix(Matrix* m);
+
 int main() {
 
-    Matrix m = {
+    srand((unsigned int)time(NULL));
+
+    Matrix a = {
         .rows = 2,
         .cols = 2
     };
 
-    m.data = malloc(sizeof *m.data * m.rows);
-    for (int i = 0; i < m.cols; i++) {
-        m.data[i] = malloc(sizeof *m.data[i] * m.cols);
-    }
+    init_matrix(&a);
 
-    int v = 5;
-    for (int i = 0; i < m.rows; i++) {
-        for (int j = 0; j < m.cols; j++) {
-            m.data[i][j] = v;
-            v++;
-        }
-    }
-
-    print_matrix(m);
+    print_matrix(a);
 
     return 0;
+}
+
+void init_matrix(Matrix* m) {
+    m->data = malloc(sizeof *m->data * m->rows);
+    for (int i = 0; i < m->cols; i++) {
+        m->data[i] = malloc(sizeof *m->data[i] * m->cols);
+    }
+
+    for (int i = 0; i < m->rows; i++) {
+        for (int j = 0; j < m->cols; j++) {
+            m->data[i][j] = rand() % 100;
+        }
+    }
 }
 
 void print_matrix(Matrix m) {
     for (int i = 0; i < m.rows; i++) {
         for (int j = 0; j < m.cols; j++) {
-            printf("%*d", 2, m.data[i][j]);
+            printf("%*d", 3, m.data[i][j]);
         }
         printf("\n");
     }

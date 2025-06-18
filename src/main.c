@@ -1,17 +1,19 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+typedef struct Matrix Matrix;
+
 struct Matrix {
     int rows;
     int cols;
     int** data;
 };
 
-void print_matrix(struct Matrix m);
+void print_matrix(Matrix m);
 
 int main() {
 
-    struct Matrix m = {
+    Matrix m = {
         .rows = 2,
         .cols = 2
     };
@@ -34,7 +36,7 @@ int main() {
     return 0;
 }
 
-void print_matrix(struct Matrix m) {
+void print_matrix(Matrix m) {
     for (int i = 0; i < m.rows; i++) {
         for (int j = 0; j < m.cols; j++) {
             printf("%*d", 2, m.data[i][j]);

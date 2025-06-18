@@ -12,12 +12,10 @@ This is simply documentation of a little learning journey as I explore:
 
 ## TODO
 
-- [x] Instantiate and print a small matrix as 2D array
-- [ ] Instantiate and print a small matrix as 1D array
-- [ ] Write functions for printing matrices of arbitrary size both as 1D and 2D arrays
-- [ ] Implement addition for both representations of a matrix
-- [ ] Examine assembly code for each addition implementation using [`godbolt`](https://godbolt.org)
+- [x] Instantiate and print a small matrix
+- [x] Write function for printing matrices of arbitrary size
 - [ ] Implement multiplication for both representations of a matrix
+- [ ] Examine assembly code for matmul implementation using [`godbolt`](https://godbolt.org) or compiler output
 - [ ] Assess runtime latency for matmul as a function of representation and input size
 - [ ] Check size of L1 cache on my machine and predict what size matrix will break cache coherence
 - [ ] Confirm empirically what dimensions in matrix multiplication will break cache coherence

@@ -14,7 +14,7 @@ This is simply documentation of a little learning journey as I explore:
 
 - [x] Instantiate and print a small matrix
 - [x] Write function for printing matrices of arbitrary size
-- [ ] Implement multiplication for both representations of a matrix
+- [x] Implement matmul
 - [ ] Examine assembly code for matmul implementation using [`godbolt`](https://godbolt.org) or compiler output
 - [ ] Assess runtime latency for matmul as a function of representation and input size
 - [ ] Check size of L1 cache on my machine and predict what size matrix will break cache coherence

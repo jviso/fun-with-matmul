@@ -12,6 +12,8 @@ struct Matrix {
 
 void print_matrix(Matrix m);
 
+void matmul(Matrix* a, Matrix* b, Matrix* result);
+
 void init_matrix(Matrix* m);
 
 int main() {
@@ -39,6 +41,19 @@ void init_matrix(Matrix* m) {
     for (int i = 0; i < m->rows; i++) {
         for (int j = 0; j < m->cols; j++) {
             m->data[i][j] = rand() % 100;
+        }
+    }
+}
+
+void matmul(Matrix* a, Matrix* b, Matrix* result) {
+    int element = 0;
+    for (int i = 0; i < result->rows; i++) {
+        for (int j = 0; j < result->cols; j++) {
+            for (int k = 0; k < a->cols; k++) {
+                element += a->data[i][k] * b->data[k][j];
+            }
+            result->data[i][j] = element;
+            element = 0;
         }
     }
 }

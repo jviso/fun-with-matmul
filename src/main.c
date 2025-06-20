@@ -14,7 +14,8 @@ typedef enum InitStrategy InitStrategy;
 
 enum InitStrategy {
     RANDOM,
-    FROM_ARRAY
+    FROM_ARRAY,
+    NO_VALUES
 };
 
 void print_matrix(Matrix m);
@@ -27,21 +28,28 @@ int main() {
 
     srand((unsigned int)time(NULL));
 
-    Matrix a;
-    if (init_matrix(&a, 2, 2, RANDOM, NULL) != 0) {
+    Matrix a, b;
+    int a_values[4] = { 1, 2, 3, 4 };
+    if (init_matrix(&a, 2, 2, FROM_ARRAY, a_values) != 0) {
         printf("Failed to initialize matrix.\n");
         return 1;
     }
-
-    Matrix b;
-    int values[9] = { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
-    if (init_matrix(&b, 3, 3, FROM_ARRAY, values) != 0) {
+    int b_values[4] = { 5, 6, 7, 8 };
+    if (init_matrix(&b, 2, 2, FROM_ARRAY, b_values) != 0) {
         printf("Failed to initialize matrix.\n");
         return 1;
     }
-
-    print_matrix(a);
-    print_matrix(b);
+    Matrix result;
+    if (init_matrix(&result, 2, 2, NO_VALUES, NULL) != 0) {
+        printf("Failed to initialize matrix.\n");
+        return 1;
+    }
+    matmul(&a, &b, &result);
+    /* Should print:
+     * 19 22
+     * 43 50
+     */
+    print_matrix(result);
 
     return 0;
 }
@@ -75,6 +83,8 @@ int init_matrix(Matrix* m, int rows, int cols, InitStrategy strategy, int* value
                     index++;
                 }
             }
+            break;
+        case NO_VALUES:
             break;
     }
 

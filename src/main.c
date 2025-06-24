@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include <time.h>
 
 typedef struct Matrix Matrix;
@@ -19,37 +20,23 @@ enum InitStrategy {
 };
 
 void print_matrix(Matrix m);
-
 void matmul(Matrix* a, Matrix* b, Matrix* result);
-
 int init_matrix(Matrix* m, int rows, int cols, InitStrategy strategy, int* values);
+bool matrices_are_equal(Matrix* a, Matrix* b);
+int test_matmul_2x2();
 
 int main() {
 
+    /* TODO
+     * Write unit tests for matmul implementation.
+     * Add timing values printed to `stdout`.
+     * Log timing values to file.
+     */
     srand((unsigned int)time(NULL));
 
-    Matrix a, b;
-    int a_values[4] = { 1, 2, 3, 4 };
-    if (init_matrix(&a, 2, 2, FROM_ARRAY, a_values) != 0) {
-        printf("Failed to initialize matrix.\n");
-        return 1;
+    if (test_matmul_2x2() != 0) {
+        printf("Failed to run matmul tests.\n");
     }
-    int b_values[4] = { 5, 6, 7, 8 };
-    if (init_matrix(&b, 2, 2, FROM_ARRAY, b_values) != 0) {
-        printf("Failed to initialize matrix.\n");
-        return 1;
-    }
-    Matrix result;
-    if (init_matrix(&result, 2, 2, NO_VALUES, NULL) != 0) {
-        printf("Failed to initialize matrix.\n");
-        return 1;
-    }
-    matmul(&a, &b, &result);
-    /* Should print:
-     * 19 22
-     * 43 50
-     */
-    print_matrix(result);
 
     return 0;
 }
@@ -75,7 +62,10 @@ int init_matrix(Matrix* m, int rows, int cols, InitStrategy strategy, int* value
                 printf("Array of values for matrix initialization must not be null.\n");
                 return 1;
             }
-            /* TODO: We also assume here that the `values` array has at least `rows * cols` elements. */
+            /* TODO
+             * We also assume here that the `values` array has at least `rows * cols` elements.
+             * Can that be fundamentally improved to be more safe?
+             */
             int index = 0;
             for (int i = 0; i < m->rows; i++) {
                 for (int j = 0; j < m->cols; j++) {
@@ -104,6 +94,43 @@ void matmul(Matrix* a, Matrix* b, Matrix* result) {
     }
 }
 
+int test_matmul_2x2() {
+    Matrix a, b;
+    int a_values[4] = { 1, 2, 3, 4 };
+    if (init_matrix(&a, 2, 2, FROM_ARRAY, a_values) != 0) {
+        printf("Failed to initialize matrix.\n");
+        return 1;
+    }
+    int b_values[4] = { 5, 6, 7, 8 };
+    if (init_matrix(&b, 2, 2, FROM_ARRAY, b_values) != 0) {
+        printf("Failed to initialize matrix.\n");
+        return 1;
+    }
+    Matrix actual;
+    if (init_matrix(&actual, 2, 2, NO_VALUES, NULL) != 0) {
+        printf("Failed to initialize matrix.\n");
+        return 1;
+    }
+    matmul(&a, &b, &actual);
+
+    Matrix expected;
+    int expected_values[4] = { 19, 22, 43, 50 };
+    if (init_matrix(&expected, 2, 2, FROM_ARRAY, expected_values) != 0) {
+        printf("Failed to initialize matrix.\n");
+        return 1;
+    }
+
+    if (!matrices_are_equal(&actual, &expected)) {
+        printf("2x2 matmul was incorrect.\n");
+        printf("Expected:\n");
+        print_matrix(expected);
+        printf("Actual:\n");
+        print_matrix(actual);
+    }
+
+    return 0;
+}
+
 void print_matrix(Matrix m) {
     for (int i = 0; i < m.rows; i++) {
         for (int j = 0; j < m.cols; j++) {
@@ -111,4 +138,20 @@ void print_matrix(Matrix m) {
         }
         printf("\n");
     }
+}
+
+bool matrices_are_equal(Matrix* a, Matrix* b) {
+    if (a->rows != b-> rows || a->cols != b->cols) {
+        return false;
+    }
+
+    for (int i = 0; i < a->rows; i++) {
+        for (int j = 0; j < a->cols; j++) {
+            if (a->data[i][j] != b->data[i][j]) {
+                return false;
+            }
+        }
+    }
+
+    return true;
 }

@@ -1,15 +1,15 @@
+#define _POSIX_C_SOURCE 200809L
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
 #include <time.h>
 
-typedef struct Matrix Matrix;
-
-struct Matrix {
+typedef struct {
     int rows;
     int cols;
     int** data;
-};
+} Matrix;
 
 typedef enum InitStrategy InitStrategy;
 
@@ -25,7 +25,12 @@ int init_matrix(Matrix* m, int rows, int cols, InitStrategy strategy, int* value
 bool matrices_are_equal(Matrix* a, Matrix* b);
 int test_matmul_2x2();
 
-int main() {
+void err(int code, const char *msg) {
+    dprintf(2, "%s\n", msg);
+    exit(code);
+}
+
+int main(int argc, char* argv[]) {
 
     /* TODO
      * Write unit tests for matmul implementation.
@@ -34,8 +39,9 @@ int main() {
      */
     srand((unsigned int)time(NULL));
 
-    if (test_matmul_2x2() != 0) {
-        printf("Failed to run matmul tests.\n");
+    int test_result = test_matmul_2x2();
+    if (test_result != 0) {
+        err(test_result, "Failed to run matmul tests.\n");
     }
 
     return 0;
@@ -44,7 +50,7 @@ int main() {
 int init_matrix(Matrix* m, int rows, int cols, InitStrategy strategy, int* values) {
     m->rows = rows;
     m->cols = cols;
-    m->data = malloc(sizeof *m->data * m->rows);
+    if ((m->data = calloc(m->rows, sizeof *m->data)) == NULL) goto alloc_failure;
     for (int i = 0; i < m->cols; i++) {
         m->data[i] = malloc(sizeof *m->data[i] * m->cols);
     }
@@ -79,29 +85,36 @@ int init_matrix(Matrix* m, int rows, int cols, InitStrategy strategy, int* value
     }
 
     return 0;
+
+alloc_failure:
+    if (m->data != NULL)
+        for (int i = 0; i < m->cols; i++)
+            free(m->data[i]);
+    free(m->data);
+
+    return 1;
 }
 
 void matmul(Matrix* a, Matrix* b, Matrix* result) {
-    int element = 0;
     for (int i = 0; i < result->rows; i++) {
         for (int j = 0; j < result->cols; j++) {
+            int element = 0;
             for (int k = 0; k < a->cols; k++) {
                 element += a->data[i][k] * b->data[k][j];
             }
             result->data[i][j] = element;
-            element = 0;
         }
     }
 }
 
 int test_matmul_2x2() {
     Matrix a, b;
-    int a_values[4] = { 1, 2, 3, 4 };
+    int a_values[] = { 1, 2, 3, 4 };
     if (init_matrix(&a, 2, 2, FROM_ARRAY, a_values) != 0) {
         printf("Failed to initialize matrix.\n");
         return 1;
     }
-    int b_values[4] = { 5, 6, 7, 8 };
+    int b_values[] = { 5, 6, 7, 8 };
     if (init_matrix(&b, 2, 2, FROM_ARRAY, b_values) != 0) {
         printf("Failed to initialize matrix.\n");
         return 1;
@@ -126,8 +139,10 @@ int test_matmul_2x2() {
         print_matrix(expected);
         printf("Actual:\n");
         print_matrix(actual);
+        return 1;
     }
 
+    /* TODO: `free` memory allocated for matrices. */
     return 0;
 }
 
